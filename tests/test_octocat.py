@@ -2,7 +2,7 @@
 
 import pytest
 
-from octocat import octocat as oc
+import octocat as oc
 
 
 params = dict(
@@ -13,9 +13,10 @@ params = dict(
 
 
 def test_octocat():
+    from octocat.octocat import OctocatAPIDescriptor
     client = oc.OctocatClient()
-    assert isinstance(client.api, oc.OctocatAPIDescriptor)
-    assert isinstance(client.api.test, oc.OctocatAPIDescriptor)
+    assert isinstance(client.api, OctocatAPIDescriptor)
+    assert isinstance(client.api.test, OctocatAPIDescriptor)
 
 
 def test_anonimous():

@@ -4,7 +4,7 @@ import re
 import sys
 from os import path as op
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
 
@@ -70,9 +70,11 @@ setup(
         'Topic :: Utilities',
     ],
 
-    packages=['octocat'],
+    packages=find_packages(),
     include_package_data=True,
     install_requires=install_requires,
     tests_require=tests_require,
     cmdclass={'test': __PyTest},
 )
+
+# pylama:ignore=D
