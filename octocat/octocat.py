@@ -30,22 +30,36 @@ class OctocatAPIDescriptor(object):
 
     """ Proxy API methods. """
 
+    __methods = 'get', 'post', 'put', 'patch', 'delete', 'head'
+
     def __init__(self, client):
         self.__client = client
         self.__session = []
+        self.__method = 'GET'
+
+    @property
+    def __url(self):
+        """ Return self url. """
+        return "/".join(self.__session)
 
     def __getattr__(self, method):
-        self.__session.append(method)
+        if method.lower() in self.__methods:
+            self.__method = method.upper()
+        else:
+            self.__session.append(method)
         return self
 
-    def __getitem__(self, method):
-        self.__session.append(method)
-        return self
+    __getitem__ = __getattr__
 
-    def __call__(self, *args, **data):
+    def __str__(self):
+        return "%s %s" % (self.__method, self.__url)
+
+    def __repr__(self):
+        return 'API %s' % self
+
+    def __call__(self, **data):
         """ Make request to github. """
-        url = '/'.join(self.__session)
-        return self.__client.get(url, data=data)
+        return self.__client.get(self.__url, data=data)
 
 
 class OctocatClient(object):
@@ -153,4 +167,4 @@ class OctocatClient(object):
         ))
 
 
-# pylama:ignore=D
+# pylama:ignore=D,E1120

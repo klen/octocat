@@ -17,6 +17,9 @@ def test_octocat():
     client = oc.OctocatClient()
     assert isinstance(client.api, OctocatAPIDescriptor)
     assert isinstance(client.api.test, OctocatAPIDescriptor)
+    assert str(client.api.users.klen) == 'GET users/klen'
+    assert str(client.api.users.klen.get) == 'GET users/klen'
+    assert str(client.api.users.klen.delete) == 'DELETE users/klen'
 
 
 def test_anonimous():
@@ -30,7 +33,7 @@ def test_anonimous():
 
 
 def test_client():
-    client = oc.OctocatClient(loglevel='debug', **params)
+    client = oc.OctocatClient(**params)
     repo = client.api.repos.klen.pylama()
     assert repo['full_name']
 
