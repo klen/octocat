@@ -1,12 +1,14 @@
 language: python
 
 python:
-    2.7
-    3.3
+  - 2.7
+  - 3.3
 
 branches:
-    only:
-        - master
-        - develop
+  only:
+    - master
+    - develop
 
 script: python setup.py test
+
+# vim:sw=2
