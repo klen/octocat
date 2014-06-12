@@ -25,7 +25,6 @@ def test_anonimous():
         client.api.unknown()
 
     repo = client.api.repos.klen.pylama()
-    import ipdb; ipdb.set_trace()  # XXX BREAKPOINT
     assert repo['full_name']
 
 

@@ -11,10 +11,6 @@ Octocat -- Python client for Github API.
     :target: http://travis-ci.org/klen/octocat
     :alt: Build Status
 
-.. image:: https://coveralls.io/repos//octocat/badge.png?branch=develop
-    :target: https://coveralls.io/r/klen/octocat
-    :alt: Coverals
-
 .. image:: https://pypip.in/d/octocat/badge.png
     :target: https://pypi.python.org/pypi/octocat
 
