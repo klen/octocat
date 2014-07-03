@@ -38,4 +38,11 @@ def test_client():
     assert repo['full_name']
 
 
+def test_mock():
+    client = oc.OctocatClient(**params)
+    with client.ctx(mock={'repos/klen/pylama': {'mocked': True}}):
+        repo = client.api.repos.klen.pylama()
+        assert repo == {'mocked': True}
+
+
 # pylama:ignore=W0611,D

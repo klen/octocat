@@ -1,4 +1,6 @@
 import logging
+import os
+import json
 import requests as rs
 import base64
 from functools import wraps
@@ -72,7 +74,9 @@ class OctocatClient(object):
         client_id=None,
         client_secret=None,
         domain='api.github.com',
+        fixtures_dir=os.getcwd(),
         loglevel='info',
+        mock=None,
         user_agent='Octocat-App',
     )
 
@@ -111,6 +115,9 @@ class OctocatClient(object):
         logger.setLevel(loglevel.upper())
         rs_logger.setLevel(loglevel.upper())
 
+        if self.options['mock'] and url in self.options['mock']:
+            return self.__load_mock(self.options['mock'][url])
+
         url = 'https://%s/%s' % (self.options['domain'], url.strip('/'))
 
         _params = self.params
@@ -124,19 +131,15 @@ class OctocatClient(object):
         try:
             response = rs.api.request(
                 method, url, params=_params, headers=_headers, **kwargs)
-            json = response.json()
-            logger.debug(json)
+            logger.debug(response.content)
             response.raise_for_status()
+            response = response.json()
 
-        except rs.HTTPError:
-            message = "%s: %s" % (response.status_code, json.get('message'))
+        except (rs.HTTPError, ValueError):
+            message = "%s: %s" % (response.status_code, response.content)
             raise OctocatException(message)
 
-        except ValueError:
-            message = "%s: %s" % (response.status_code, response.body)
-            raise OctocatException(message)
-
-        return json
+        return response
 
     get = _curry_method(request, 'GET')
     post = _curry_method(request, 'POST')
@@ -165,6 +168,16 @@ class OctocatClient(object):
             Authorization='Basic ' + base64.b64encode(
                 '%s:%s' % (username, password)).strip()
         ))
+
+    def __load_mock(self, mock):
+        """ Load mock from file or return an object. """
+
+        if not isinstance(mock, str):
+            return mock
+
+        mock = os.path.join(self.options['fixtures_dir'], mock)
+        with open(mock) as f:
+            return json.load(f)
 
 
 # pylama:ignore=D,E1120
