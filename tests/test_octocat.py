@@ -17,9 +17,11 @@ def test_octocat():
     client = oc.OctocatClient()
     assert isinstance(client.api, OctocatAPIDescriptor)
     assert isinstance(client.api.test, OctocatAPIDescriptor)
-    assert str(client.api.users.klen) == 'GET users/klen'
-    assert str(client.api.users.klen.get) == 'GET users/klen'
-    assert str(client.api.users.klen.delete) == 'DELETE users/klen'
+    mp = client.api.users
+    assert str(mp.klen) == 'GET users/klen'
+    assert str(mp.klen.get) == 'GET users/klen'
+    assert str(mp.klen.delete) == 'DELETE users/klen'
+    assert str(mp.lama.get) == 'GET users/lama'
 
 
 def test_anonimous():

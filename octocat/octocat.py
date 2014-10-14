@@ -34,10 +34,10 @@ class OctocatAPIDescriptor(object):
 
     __methods = 'get', 'post', 'put', 'patch', 'delete', 'head'
 
-    def __init__(self, client):
+    def __init__(self, client, method='GET', session=None):
         self.__client = client
-        self.__session = []
-        self.__method = 'GET'
+        self.__method = method
+        self.__session = [] if session is None else session
 
     @property
     def __url(self):
@@ -45,10 +45,9 @@ class OctocatAPIDescriptor(object):
         return "/".join(self.__session)
 
     def __getattr__(self, method):
-        if method.lower() in self.__methods:
-            self.__method = method.upper()
-        else:
-            self.__session.append(method)
+        if method.lower() not in self.__methods:
+            return OctocatAPIDescriptor(self.__client, self.__method, self.__session + [method])
+        self.__method = method.upper()
         return self
 
     __getitem__ = __getattr__
