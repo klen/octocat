@@ -60,7 +60,14 @@ class OctocatAPIDescriptor(object):
 
     def __call__(self, **data):
         """ Make request to github. """
-        return self.__client.get(self.__url, data=data)
+        kwargs = dict(data=data)
+        if self.__method.lower() == 'get':
+            data = dict(
+                (k, v if not isinstance(v, (list, tuple)) else ','.join(v))
+                for (k, v) in data.items())
+            kwargs = dict(params=data)
+
+        return self.__client.request(self.__method, self.__url, **kwargs)
 
 
 class OctocatClient(object):
