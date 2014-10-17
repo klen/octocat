@@ -40,6 +40,13 @@ def test_client():
     assert repo['full_name']
 
 
+def test_cache():
+    client = oc.OctocatClient(**params)
+    with client.ctx(cache='test'):
+        repos = client.api.users.klen.repos()
+    assert repos
+
+
 def test_mock():
     client = oc.OctocatClient(**params)
     with client.ctx(mock={'repos/klen/pylama': {'mocked': True}}):

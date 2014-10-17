@@ -2,6 +2,7 @@ import logging
 import os
 import json
 import requests as rs
+import requests_cache as rc # noqa
 import base64
 from functools import wraps
 from contextlib import contextmanager
@@ -74,9 +75,13 @@ class OctocatClient(object):
 
     """ Client for github API. """
 
+    exception = OctocatException
+    cache_installed = False
+
     default_options = dict(
         accept='application/vnd.github.v3+json',
         access_token=None,
+        cache=None,
         client_id=None,
         client_secret=None,
         domain='api.github.com',
@@ -121,6 +126,14 @@ class OctocatClient(object):
         logger.setLevel(loglevel.upper())
         rs_logger.setLevel(loglevel.upper())
 
+        if self.options['cache']:
+            rc.install_cache(self.options['cache'])
+
+        elif type(self).cache_installed:
+            rc.uninstall_cache()
+
+        type(self).cache_installed = bool(self.options['cache'])
+
         if self.options['mock'] and url in self.options['mock']:
             return self.__load_mock(self.options['mock'][url])
 
@@ -163,6 +176,8 @@ class OctocatClient(object):
             yield self
         finally:
             self.options = _opts
+            if not self.options['cache'] and type(self).cache_installed:
+                rc.uninstall_cache()
 
     @property
     def api(self):

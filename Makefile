@@ -53,13 +53,14 @@ register:
 .PHONY: upload
 # target: upload - Upload module on PyPi
 upload: clean docs
-	@pip install twine wheel
+	@$(VENV)/bin/pip install twine wheel
 	@python setup.py sdist bdist_wheel
 	@twine upload dist/*
 
 .PHONY: docs
 # target: docs - Compile the docs
 docs: docs
+	@$(VENV)/bin/pip install sphinx
 	python setup.py build_sphinx --source-dir=docs/ --build-dir=docs/_build --all-files
 	# python setup.py upload_sphinx --upload-dir=docs/_build/html
 
